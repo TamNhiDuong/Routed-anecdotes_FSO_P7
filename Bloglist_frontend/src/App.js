@@ -8,7 +8,7 @@ import NewBlogForm from './components/NewBlogForm'
 import Notification from './components/Notification'
 
 import { setNotification } from '../src/reducers/notificationReducer'
-import { initBlogs, setBlogs } from './reducers/blogsReducer'
+import { initBlogs, setBlogs, createBlog } from './reducers/blogsReducer'
 
 
 const App = () => {
@@ -72,9 +72,7 @@ const App = () => {
     setNewBlogFormVisible(false)
 
     try {
-      const savedBlog = await blogService.create(blog)
-      const sortedBlogs = sortBlogsByLikes(blogs.concat(savedBlog))
-      dispatch(setBlogs(sortedBlogs))
+      dispatch(createBlog(blog))
 
       // notify
       dispatch(setNotification('New blog added', 5000))
