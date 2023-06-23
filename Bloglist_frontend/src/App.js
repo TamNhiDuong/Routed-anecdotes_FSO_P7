@@ -3,16 +3,20 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import NewBlogForm from './components/NewBlogForm'
+import Notification from './components/Notification'
+
+import { setNotification } from '../src/reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [errorMessage, setErrorMessage] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
 
   const [newBlogFormVisible, setNewBlogFormVisible] = useState(false)
+
+  const dispatch = useDispatch()
 
   const sortBlogsByLikes = (blogs) => {
     const blogsWithLikes = blogs.filter((b) => b.likes !== undefined)
@@ -56,15 +60,12 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      setSuccessMessage('Login succeed')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+
+      // notify
+      dispatch(setNotification('Login succeed', 5000))
     } catch (exception) {
-      setErrorMessage('Wrong credentials')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      // notify
+      dispatch(setNotification('Wrong credentials', 5000))
     }
   }
 
@@ -76,15 +77,11 @@ const App = () => {
       const sortedBlogs = sortBlogsByLikes(blogs.concat(savedBlog))
       setBlogs(sortedBlogs)
 
-      setSuccessMessage('New blog added')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      // notify
+      dispatch(setNotification('New blog added', 5000))
     } catch (e) {
-      setErrorMessage('Cannot add new blog')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      // notify
+      dispatch(setNotification('Cannot add new blog', 5000))
     }
   }
 
@@ -107,15 +104,11 @@ const App = () => {
       const sortedBlogs = sortBlogsByLikes(clonedBlogs)
       setBlogs(sortedBlogs)
 
-      setSuccessMessage('Likes has been updated')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      // notify
+      dispatch(setNotification('Likes has been updated', 5000))
     } catch (e) {
-      setErrorMessage('Cannot update likes')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      // notify
+      dispatch(setNotification('Cannot like', 5000))
     }
   }
 
@@ -125,15 +118,11 @@ const App = () => {
       const filteredBlogs = blogs.filter((b) => b.id !== id)
       setBlogs(filteredBlogs)
 
-      setSuccessMessage('Blog deleted')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      // notify
+      dispatch(setNotification('Blog deleted', 5000))
     } catch (e) {
-      setErrorMessage('Cannot delete')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      // notify
+      dispatch(setNotification('Cannot delete', 5000))
     }
   }
 
@@ -199,24 +188,10 @@ const App = () => {
 
   const hideWhenFormVisible = { display: newBlogFormVisible ? 'none' : '' }
   const showWhenFormVisible = { display: newBlogFormVisible ? '' : 'none' }
-  const successMessageStyle = {
-    borderStyle: 'solid',
-    borderWidth: 2,
-    borderColor: 'blue',
-    color: 'blue',
-  }
-  const errMessageStyle = {
-    borderStyle: 'solid',
-    borderWidth: 2,
-    borderColor: 'red',
-    color: 'red',
-  }
+
   return (
     <div>
-      {errorMessage && <p style={errMessageStyle}>{errorMessage}</p>}
-      {successMessage && (
-        <p style={successMessageStyle}>{successMessage && successMessage}</p>
-      )}
+      <Notification/>
       {!user && loginForm()}
       {user && (
         <div>
