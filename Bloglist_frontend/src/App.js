@@ -1,4 +1,6 @@
 import { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -6,10 +8,10 @@ import NewBlogForm from './components/NewBlogForm'
 import Notification from './components/Notification'
 
 import { setNotification } from '../src/reducers/notificationReducer'
-import { useDispatch } from 'react-redux'
+import { initBlogs, setBlogs } from './reducers/blogsReducer'
+
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -17,6 +19,9 @@ const App = () => {
   const [newBlogFormVisible, setNewBlogFormVisible] = useState(false)
 
   const dispatch = useDispatch()
+  const blogs = useSelector(state => {
+    return state.blogs
+  })
 
   const sortBlogsByLikes = (blogs) => {
     const blogsWithLikes = blogs.filter((b) => b.likes !== undefined)
@@ -28,13 +33,7 @@ const App = () => {
   }
 
   useEffect(() => {
-    async function fetchBlogs() {
-      const blogs = await blogService.getAll()
-
-      const sortedBlogs = sortBlogsByLikes(blogs)
-      setBlogs(sortedBlogs)
-    }
-    fetchBlogs()
+    dispatch(initBlogs())
   }, [user])
 
   useEffect(() => {
@@ -75,7 +74,7 @@ const App = () => {
     try {
       const savedBlog = await blogService.create(blog)
       const sortedBlogs = sortBlogsByLikes(blogs.concat(savedBlog))
-      setBlogs(sortedBlogs)
+      dispatch(setBlogs(sortedBlogs))
 
       // notify
       dispatch(setNotification('New blog added', 5000))
@@ -102,7 +101,7 @@ const App = () => {
         }
       })
       const sortedBlogs = sortBlogsByLikes(clonedBlogs)
-      setBlogs(sortedBlogs)
+      dispatch(setBlogs(sortedBlogs))
 
       // notify
       dispatch(setNotification('Likes has been updated', 5000))
@@ -116,7 +115,7 @@ const App = () => {
     try {
       await blogService.deleteBlog(id)
       const filteredBlogs = blogs.filter((b) => b.id !== id)
-      setBlogs(filteredBlogs)
+      dispatch(setBlogs(filteredBlogs))
 
       // notify
       dispatch(setNotification('Blog deleted', 5000))
@@ -157,7 +156,7 @@ const App = () => {
   const logout = () => {
     window.localStorage.removeItem('loggedUser')
     setUser(null)
-    setBlogs([])
+    dispatch(setBlogs([]))
   }
 
   const userInfo = () => {
