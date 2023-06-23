@@ -31,11 +31,13 @@ Cypress.Commands.add('createBlog', (body) => {
     body: {
       title: body.title,
       author: body.author,
-      url: body.url
+      url: body.url,
     },
     headers: {
-      'Authorization': `Bearer ${JSON.parse(window.localStorage.getItem('loggedUser')).token}`
-    }
+      Authorization: `Bearer ${
+        JSON.parse(window.localStorage.getItem('loggedUser')).token
+      }`,
+    },
   })
 
   cy.visit('http://localhost:3000')

@@ -14,8 +14,10 @@ const Togglable = (props) => {
     <div>
       {props.children}
 
-      <div style={visible ? showWhenVisible: hideWhenVisible}>
-        <button onClick={toggleVisibility}>{visible ? closeButtonLabel : buttonLabel}</button>
+      <div style={visible ? showWhenVisible : hideWhenVisible}>
+        <button onClick={toggleVisibility}>
+          {visible ? closeButtonLabel : buttonLabel}
+        </button>
       </div>
     </div>
   )
@@ -25,7 +27,7 @@ Togglable.propTypes = {
   buttonLabel: PropTypes.string.isRequired,
   closeButtonLabel: PropTypes.string.isRequired,
   setVisible: PropTypes.func.isRequired,
-  visible: PropTypes.bool.isRequired
+  visible: PropTypes.bool.isRequired,
 }
 
 Togglable.displayName = 'Togglable'

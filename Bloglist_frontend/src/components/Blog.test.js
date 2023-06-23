@@ -10,7 +10,7 @@ test('renders only title and author', () => {
     title: 'Blog test',
     author: 'Tester',
     likes: 0,
-    url: 'http://localhost:3000/'
+    url: 'http://localhost:3000/',
   }
 
   render(<Blog blog={blog} />)
@@ -24,12 +24,10 @@ test('clicking the button calls event handler', async () => {
     title: 'Blog click test',
     author: 'Tester',
     likes: 0,
-    url: 'http://localhost:3000/'
+    url: 'http://localhost:3000/',
   }
 
-  const { container } = render(
-    <Blog blog={blog} />
-  )
+  const { container } = render(<Blog blog={blog} />)
 
   const user = userEvent.setup()
   const button = screen.getByText('view')
@@ -47,13 +45,11 @@ test('clicking the like button twice, the event handler the component received a
     title: 'Blog click test',
     author: 'Tester',
     likes: 0,
-    url: 'http://localhost:3000/'
+    url: 'http://localhost:3000/',
   }
 
   const mockHandler = jest.fn()
-  const { container } = render(
-    <Blog blog={blog} updateBlog={mockHandler} />
-  )
+  const { container } = render(<Blog blog={blog} updateBlog={mockHandler} />)
 
   // Click "view" button
   const user = userEvent.setup()

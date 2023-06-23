@@ -15,9 +15,11 @@ const App = () => {
   const [newBlogFormVisible, setNewBlogFormVisible] = useState(false)
 
   const sortBlogsByLikes = (blogs) => {
-    const blogsWithLikes = blogs.filter(b => b.likes !== undefined)
-    const blogsWithoutLikes = blogs.filter(b => b.likes === undefined)
-    const sortedBlogs = blogsWithLikes.sort((a, b) => (a.likes < b.likes) ? 1 : ((b.likes < a.likes) ? -1 : 0))
+    const blogsWithLikes = blogs.filter((b) => b.likes !== undefined)
+    const blogsWithoutLikes = blogs.filter((b) => b.likes === undefined)
+    const sortedBlogs = blogsWithLikes.sort((a, b) =>
+      a.likes < b.likes ? 1 : b.likes < a.likes ? -1 : 0
+    )
     return sortedBlogs.concat(blogsWithoutLikes)
   }
 
@@ -44,13 +46,12 @@ const App = () => {
     event.preventDefault()
     try {
       const user = await loginService.login({
-        username, password,
+        username,
+        password,
       })
 
       // Save user to local storage
-      window.localStorage.setItem(
-        'loggedUser', JSON.stringify(user)
-      )
+      window.localStorage.setItem('loggedUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -121,21 +122,20 @@ const App = () => {
   const deleteBlog = async (id) => {
     try {
       await blogService.deleteBlog(id)
-      const filteredBlogs = blogs.filter(b => b.id !== id)
+      const filteredBlogs = blogs.filter((b) => b.id !== id)
       setBlogs(filteredBlogs)
 
       setSuccessMessage('Blog deleted')
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
-    } catch(e) {
+    } catch (e) {
       setErrorMessage('Cannot delete')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
     }
   }
-
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
@@ -159,7 +159,9 @@ const App = () => {
           onChange={({ target }) => setPassword(target.value)}
         />
       </div>
-      <button type="submit" id="login-button">login</button>
+      <button type="submit" id="login-button">
+        login
+      </button>
     </form>
   )
 
@@ -182,38 +184,58 @@ const App = () => {
     return (
       <div>
         <h2>blogs</h2>
-        {
-          blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} updateBlog={updateBlog} user={user} deleteBlog={deleteBlog} />
-          )
-        }</div>
+        {blogs.map((blog) => (
+          <Blog
+            key={blog.id}
+            blog={blog}
+            updateBlog={updateBlog}
+            user={user}
+            deleteBlog={deleteBlog}
+          />
+        ))}
+      </div>
     )
   }
 
   const hideWhenFormVisible = { display: newBlogFormVisible ? 'none' : '' }
   const showWhenFormVisible = { display: newBlogFormVisible ? '' : 'none' }
-  const successMessageStyle = { borderStyle: 'solid', borderWidth: 2, borderColor: 'blue', color: 'blue' }
-  const errMessageStyle = { borderStyle: 'solid', borderWidth: 2, borderColor: 'red', color: 'red' }
+  const successMessageStyle = {
+    borderStyle: 'solid',
+    borderWidth: 2,
+    borderColor: 'blue',
+    color: 'blue',
+  }
+  const errMessageStyle = {
+    borderStyle: 'solid',
+    borderWidth: 2,
+    borderColor: 'red',
+    color: 'red',
+  }
   return (
     <div>
       {errorMessage && <p style={errMessageStyle}>{errorMessage}</p>}
-      {successMessage && <p style={successMessageStyle}>{successMessage && successMessage}</p>}
+      {successMessage && (
+        <p style={successMessageStyle}>{successMessage && successMessage}</p>
+      )}
       {!user && loginForm()}
-      {user && <div>
-        {userInfo()}
+      {user && (
+        <div>
+          {userInfo()}
 
-        <div style={hideWhenFormVisible}>
-          <button onClick={() => setNewBlogFormVisible(true)}>new blog</button>
+          <div style={hideWhenFormVisible}>
+            <button onClick={() => setNewBlogFormVisible(true)}>
+              new blog
+            </button>
+          </div>
+
+          <div style={showWhenFormVisible}>
+            <NewBlogForm addBlog={addBlog} />
+            <button onClick={() => setNewBlogFormVisible(false)}>cancel</button>
+          </div>
+
+          {blogList()}
         </div>
-
-        <div style={showWhenFormVisible}>
-          <NewBlogForm addBlog={addBlog} />
-          <button onClick={() => setNewBlogFormVisible(false)}>cancel</button>
-        </div>
-
-
-        {blogList()}
-      </div>}
+      )}
     </div>
   )
 }
